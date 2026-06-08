@@ -153,111 +153,13 @@ Berikut adalah diagram ERD (Entity Relationship Diagram) dari database aplikasi 
 
 ## Struktur Tabel Database
 
-Berikut adalah penjelasan struktur kolom untuk masing-masing tabel database hasil migrasi Laravel:
-
-### 1. Tabel `users`
-Digunakan untuk menyimpan informasi kredensial pengguna (Admin / Panitia).
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik user |
-| `name` | Varchar(255) | Not Null | Nama lengkap user |
-| `email` | Varchar(255) | Unique, Not Null | Alamat email (untuk login) |
-| `email_verified_at` | Timestamp | Nullable | Waktu email diverifikasi |
-| `password` | Varchar(255) | Not Null | Password terenkripsi |
-| `role` | Enum('admin', 'panitia') | Default 'panitia' | Peran/hak akses user |
-| `remember_token` | Varchar(100) | Nullable | Token untuk fitur "remember me" |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 2. Tabel `teams`
-Menyimpan data tim futsal yang mendaftar.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik tim |
-| `name` | Varchar(255) | Not Null | Nama tim futsal |
-| `logo` | Varchar(255) | Nullable | Nama file logo tim |
-| `coach_name` | Varchar(255) | Not Null | Nama pelatih tim |
-| `description` | Text | Nullable | Deskripsi singkat mengenai tim |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 3. Tabel `players`
-Menyimpan data pemain yang terdaftar dalam suatu tim.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik pemain |
-| `team_id` | Bigint Unsigned | FK, Constrained, Cascade | ID tim asal pemain |
-| `name` | Varchar(255) | Not Null | Nama lengkap pemain |
-| `back_number` | Integer | Not Null | Nomor punggung pemain |
-| `position` | Varchar(255) | Not Null | Posisi pemain (misal: GK, Pivot, Anchor, Flank) |
-| `birth_date` | Date | Not Null | Tanggal lahir pemain |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 4. Tabel `tournaments`
-Menyimpan data turnamen futsal yang diadakan.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik turnamen |
-| `name` | Varchar(255) | Not Null | Nama turnamen |
-| `status` | Enum('draft', 'ongoing', 'completed') | Default 'draft' | Status pelaksanaan turnamen |
-| `start_date` | Date | Not Null | Tanggal mulai turnamen |
-| `end_date` | Date | Not Null | Tanggal berakhir turnamen |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 5. Tabel `groups`
-Menyimpan data pembagian grup dalam turnamen (misal: Grup A, Grup B).
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik grup |
-| `tournament_id` | Bigint Unsigned | FK, Constrained, Cascade | ID turnamen terkait |
-| `name` | Varchar(255) | Not Null | Nama grup (misal: Group A) |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 6. Tabel `group_team` (Pivot Table)
-Tabel relasi Many-to-Many untuk menghubungkan tim ke dalam grup.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `group_id` | Bigint Unsigned | Composite PK, FK, Cascade | ID grup |
-| `team_id` | Bigint Unsigned | Composite PK, FK, Cascade | ID tim |
-
-### 7. Tabel `matches`
-Menyimpan jadwal dan hasil skor pertandingan.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik pertandingan |
-| `tournament_id` | Bigint Unsigned | FK, Constrained, Cascade | ID turnamen terkait |
-| `group_id` | Bigint Unsigned | FK, Nullable, Cascade | ID grup terkait (null jika fase knockout) |
-| `round` | Enum('group', 'quarterfinal', 'semifinal', 'final') | Default 'group' | Babak pertandingan |
-| `team1_id` | Bigint Unsigned | FK, Constrained, Cascade | ID Tim Kesatu |
-| `team2_id` | Bigint Unsigned | FK, Constrained, Cascade | ID Tim Kedua |
-| `team1_score` | Integer | Nullable | Skor gol Tim Kesatu |
-| `team2_score` | Integer | Nullable | Skor gol Tim Kedua |
-| `winner_id` | Bigint Unsigned | FK, Nullable, Cascade | ID Tim pemenang |
-| `match_date` | Datetime | Not Null | Waktu pertandingan dimulai |
-| `status` | Enum('scheduled', 'played') | Default 'scheduled' | Status pelaksanaan pertandingan |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-### 8. Tabel `standings`
-Menyimpan data klasemen tim di dalam grup.
-| Nama Kolom | Tipe Data | Atribut | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `id` | Bigint Unsigned | PK, Auto Increment | ID unik klasemen |
-| `tournament_id` | Bigint Unsigned | FK, Constrained, Cascade | ID turnamen terkait |
-| `group_id` | Bigint Unsigned | FK, Constrained, Cascade | ID grup terkait |
-| `team_id` | Bigint Unsigned | FK, Constrained, Cascade | ID tim terkait |
-| `played` | Integer | Default 0 | Jumlah pertandingan dimainkan |
-| `won` | Integer | Default 0 | Jumlah kemenangan |
-| `drawn` | Integer | Default 0 | Jumlah seri / imbang |
-| `lost` | Integer | Default 0 | Jumlah kekalahan |
-| `goals_for` | Integer | Default 0 | Jumlah gol dicetak |
-| `goals_against` | Integer | Default 0 | Jumlah gol kemasukan |
-| `goals_difference` | Integer | Default 0 | Selisih gol |
-| `points` | Integer | Default 0 | Jumlah poin |
-| `created_at` | Timestamp | Nullable | Waktu data dibuat |
-| `updated_at` | Timestamp | Nullable | Waktu data diupdate |
-
-
+| Tabel | Kolom |
+| :--- | :--- |
+| **`users`** | `id`, `name`, `email`, `password`, `role (enum: admin, panitia)`, `remember_token`, `timestamps` |
+| **`teams`** | `id`, `name`, `logo (nullable)`, `coach_name`, `description (text, nullable)`, `timestamps` |
+| **`players`** | `id`, `team_id (FK)`, `name`, `back_number`, `position`, `birth_date (date)`, `timestamps` |
+| **`tournaments`** | `id`, `name`, `status (enum: draft, ongoing, completed)`, `start_date (date)`, `end_date (date)`, `timestamps` |
+| **`groups`** | `id`, `tournament_id (FK)`, `name`, `timestamps` |
+| **`group_team`** | `group_id (FK)`, `team_id (FK)` |
+| **`matches`** | `id`, `tournament_id (FK)`, `group_id (FK, nullable)`, `round (enum: group, quarterfinal, semifinal, final)`, `team1_id (FK)`, `team2_id (FK)`, `team1_score (nullable)`, `team2_score (nullable)`, `winner_id (FK, nullable)`, `match_date (datetime)`, `status (enum: scheduled, played)`, `timestamps` |
+| **`standings`** | `id`, `tournament_id (FK)`, `group_id (FK)`, `team_id (FK)`, `played (int)`, `won (int)`, `drawn (int)`, `lost (int)`, `goals_for (int)`, `goals_against (int)`, `goals_difference (int)`, `points (int)`, `timestamps` |
