@@ -1,6 +1,6 @@
-# Project UTS - Laravel Web Application
+# Laporan Project UTS - Praktikum Pemrograman Web Fullstack
 
-## 1. Identitas
+## Identitas
 * **Nama:** Levy Danendra Fahriza Zani
 * **NIM:** 2305101032
 * **Kelas:** 6B
@@ -9,7 +9,7 @@
 
 ---
 
-## 2. Persyaratan Sistem (System Requirements)
+## Persyaratan Sistem (System Requirements)
 Sebelum menjalankan proyek ini, pastikan perangkat kamu sudah memenuhi spesifikasi minimum berikut:
 
 * **PHP:** Version 8.1 atau lebih tinggi
@@ -20,7 +20,7 @@ Sebelum menjalankan proyek ini, pastikan perangkat kamu sudah memenuhi spesifika
 
 ---
 
-## 3. Cara Menjalankan Project / Panduan Instalasi
+## Cara Menjalankan Project / Panduan Instalasi
 
 Ikuti langkah-langkah di bawah ini untuk menjalankan proyek di komputer lokal Anda:
 
@@ -66,13 +66,13 @@ Server akan berjalan dan dapat diakses melalui browser di: http://127.0.0.1:8000
 
 ---
 
-## 4. Pengujian (Testing)
+## Pengujian (Testing)
 * **Akses Web:** Silakan buka [http://127.0.0.1:8000](http://127.0.0.1:8000) di browser untuk melihat dan berinteraksi dengan antarmuka aplikasi.
 * **Pengujian API (Opsional):** Jika proyek ini mencakup pembuatan API, Anda dapat meng-import file Collection Postman (`Futsal_Tournament.postman_collection.json`) yang telah disertakan di dalam repository ini ke dalam aplikasi Postman Anda untuk menguji seluruh endpoint dan error handling yang sudah dikonfigurasi.
 
 ---
 
-## 5. Testing & Dokumentasi API (postman)
+## Testing & Dokumentasi API (postman)
 Berikut adalah beberapa tampilan antarmuka (interface) dari aplikasi Futsal Tournament:
 
 1. **Landing Page**
@@ -221,5 +221,15 @@ Standing         -> belongsTo      -> Team
 | **Public View**| `GET` | `/` | Tampilan Landing Page umum (Semua Pengguna / Guest) |
 | | `GET` | `/public/tournaments/{tournament}`| Tampilan klasemen & jadwal publik turnamen tertentu (Semua Pengguna) |
 | | `GET` | `/public/tournaments/{tournament}/knockout`| Tampilan bagan/bracket fase knockout publik (Semua Pengguna) |
+
+---
+
+## Akun Default (Seeder)
+
+| Role | Nama | Email | Password |
+| :--- | :--- | :--- | :--- |
+| Admin | Admin Utama | admin@futsal.com | admin123 |
+| Panitia | Panitia Lapangan | panitia@futsal.com | panitia123 |
+
 
 
