@@ -192,3 +192,58 @@ Standing         -> belongsTo      -> Group
 Standing         -> belongsTo      -> Team
 ```
 
+---
+
+## Daftar Endpoint API
+
+| Modul | Method | Endpoint (Route) | Deskripsi & Akses |
+| :--- | :--- | :--- | :--- |
+| **Auth** | `GET` | `/login` | Tampilan halaman login (Guest) |
+| | `POST` | `/login` | Proses autentikasi login (Guest) |
+| | `GET` | `/register` | Tampilan halaman pendaftaran (Guest) |
+| | `POST` | `/register` | Proses pendaftaran pengguna baru (Guest) |
+| | `POST` | `/logout` | Logout dari sistem dan menghapus session (Semua User Terautentikasi) |
+| **Dashboard**| `GET` | `/dashboard` | Menampilkan dashboard statistik utama (Admin & Panitia) |
+| **Teams** | `GET` | `/teams` | Menampilkan daftar seluruh tim futsal (Admin Only) |
+| | `POST` | `/teams` | Menyimpan data tim futsal baru (Admin Only) |
+| | `GET` | `/teams/create` | Form untuk mendaftarkan tim futsal baru (Admin Only) |
+| | `GET` | `/teams/{team}` | Menampilkan detail profil tim futsal tertentu (Admin Only) |
+| | `GET` | `/teams/{team}/edit` | Form untuk mengubah profil tim futsal tertentu (Admin Only) |
+| | `PUT`/`PATCH`| `/teams/{team}` | Memperbarui profil tim futsal tertentu (Admin Only) |
+| | `DELETE` | `/teams/{team}` | Menghapus tim futsal dari sistem (Admin Only) |
+| **Players** | `GET` | `/players` | Menampilkan daftar seluruh pemain (Admin Only) |
+| | `POST` | `/players` | Menyimpan data pemain baru (Admin Only) |
+| | `GET` | `/players/create` | Form untuk menambahkan pemain baru (Admin Only) |
+| | `GET` | `/players/{player}` | Menampilkan detail profil pemain tertentu (Admin Only) |
+| | `GET` | `/players/{player}/edit`| Form untuk mengubah profil pemain tertentu (Admin Only) |
+| | `PUT`/`PATCH`| `/players/{player}` | Memperbarui profil pemain tertentu (Admin Only) |
+| | `DELETE` | `/players/{player}` | Menghapus data pemain dari sistem (Admin Only) |
+| **Tournaments**| `GET` | `/tournaments` | Menampilkan daftar turnamen kelolaan (Admin Only) |
+| | `POST` | `/tournaments` | Membuat data turnamen futsal baru (Admin Only) |
+| | `GET` | `/tournaments/create`| Form untuk membuat turnamen baru (Admin Only) |
+| | `GET` | `/tournaments/{tournament}/edit`| Form untuk mengubah data turnamen (Admin Only) |
+| | `PUT`/`PATCH`| `/tournaments/{tournament}`| Memperbarui data turnamen (Admin Only) |
+| | `DELETE` | `/tournaments/{tournament}`| Menghapus turnamen dari database (Admin Only) |
+| | `GET` | `/tournaments/{tournament}`| Detail turnamen & manajemen grup/fase (Admin & Panitia) |
+| | `GET` | `/tournaments/{tournament}/knockout`| Panel bracket fase knockout admin (Admin & Panitia) |
+| | `GET` | `/tournaments/{tournament}/pdf`| Generate dan unduh PDF laporan turnamen (Admin & Panitia) |
+| **Groups** | `GET` | `/tournaments/{tournament}/groups/create`| Form untuk menambahkan grup di turnamen (Admin Only) |
+| | `POST` | `/tournaments/{tournament}/groups`| Menyimpan grup baru di dalam turnamen (Admin Only) |
+| | `DELETE` | `/groups/{group}` | Menghapus grup dari turnamen (Admin Only) |
+| | `GET` | `/groups/{group}/teams`| Form untuk mengelola pembagian tim ke dalam grup (Admin Only) |
+| | `POST` | `/groups/{group}/teams`| Memperbarui pembagian tim dalam grup (Admin Only) |
+| **Knockout** | `POST` | `/tournaments/{tournament}/knockout/initialize-quarterfinals`| Menginisialisasi bracket perempat final (Admin Only) |
+| | `POST` | `/tournaments/{tournament}/knockout/initialize-semifinals`| Menginisialisasi bracket semifinal (Admin Only) |
+| **Matches** | `GET` | `/tournaments/{tournament}/matches/create`| Form pembuatan jadwal pertandingan manual (Admin & Panitia) |
+| | `POST` | `/tournaments/{tournament}/matches`| Menyimpan jadwal pertandingan baru manual (Admin & Panitia) |
+| | `POST` | `/tournaments/{tournament}/matches/generate`| Generate otomatis jadwal pertandingan penyisihan grup (Admin & Panitia) |
+| | `GET` | `/matches/{match}/edit`| Form pengubahan jadwal pertandingan (Admin & Panitia) |
+| | `PUT`/`PATCH`| `/matches/{match}` | Memperbarui jadwal pertandingan (Admin & Panitia) |
+| | `DELETE` | `/matches/{match}` | Menghapus pertandingan dari jadwal (Admin & Panitia) |
+| | `GET` | `/matches/{match}/score`| Form pengisian hasil skor pertandingan (Admin & Panitia) |
+| | `POST` | `/matches/{match}/score`| Menyimpan skor gol dan pemenang pertandingan (Admin & Panitia) |
+| **Public View**| `GET` | `/` | Tampilan Landing Page umum (Semua Pengguna / Guest) |
+| | `GET` | `/public/tournaments/{tournament}`| Tampilan klasemen & jadwal publik turnamen tertentu (Semua Pengguna) |
+| | `GET` | `/public/tournaments/{tournament}/knockout`| Tampilan bagan/bracket fase knockout publik (Semua Pengguna) |
+
+
