@@ -113,41 +113,17 @@ Berikut adalah diagram ERD (Entity Relationship Diagram) dari database aplikasi 
 
 ![ERD Database](ERD/erd_database.png)
 
-### Penjelasan Relasi Antar Tabel
+Berdasarkan *Foreign Key* (FK) yang dirancang pada database, berikut adalah relasi antar tabel:
+* **Tournament ke Group (One-to-Many):** Satu turnamen dapat memiliki banyak grup penyisihan. *Foreign key* `tournament_id` berada di tabel `groups`.
+* **Tournament ke Match (One-to-Many):** Satu turnamen dapat menyelenggarakan banyak pertandingan. *Foreign key* `tournament_id` berada di tabel `matches`.
+* **Tournament ke Standing (One-to-Many):** Satu turnamen dapat memiliki banyak klasemen grup. *Foreign key* `tournament_id` berada di tabel `standings`.
+* **Group ke Match (One-to-Many):** Satu grup dapat memiliki banyak pertandingan penyisihan. *Foreign key* `group_id` berada di tabel `matches`.
+* **Group ke Standing (One-to-Many):** Satu grup memiliki banyak catatan klasemen tim. *Foreign key* `group_id` berada di tabel `standings`.
+* **Team ke Player (One-to-Many):** Satu tim dapat memiliki banyak pemain yang terdaftar. *Foreign key* `team_id` berada di tabel `players`.
+* **Team ke Group (Many-to-Many):** Hubungan tim dan grup dihubungkan melalui tabel pivot `group_team` dengan *foreign key* `group_id` dan `team_id`.
+* **Team ke Match (One-to-Many, Ganda):** Satu tim dapat bertindak sebagai Tim Kesatu (`team1_id`), Tim Kedua (`team2_id`), atau Tim Pemenang (`winner_id`) di dalam pertandingan. *Foreign key* `team1_id`, `team2_id`, dan `winner_id` berada di tabel `matches`.
+* **Team ke Standing (One-to-Many):** Satu tim memiliki catatan performa klasemen di dalam grup. *Foreign key* `team_id` berada di tabel `standings`.
 
-1. **`users`**
-   - Tabel ini bersifat mandiri (*standalone*) dan digunakan untuk mengelola data pengguna (nama, email, password, role) dalam sistem, seperti autentikasi admin atau panitia turnamen.
-
-2. **`tournaments`**
-   - **Hubungan dengan `groups` (One-to-Many):** Satu turnamen (`tournaments`) dapat memiliki banyak grup (`groups`). Relasi ini dihubungkan melalui foreign key `tournament_id` pada tabel `groups`.
-   - **Hubungan dengan `matches` (One-to-Many):** Satu turnamen dapat mengadakan banyak pertandingan (`matches`). Relasi ini dihubungkan melalui foreign key `tournament_id` pada tabel `matches`.
-
-3. **`groups`**
-   - **Hubungan dengan `group_team` (One-to-Many):** Menghubungkan grup dengan tim yang berpartisipasi di dalamnya. Dihubungkan melalui foreign key `group_id` pada tabel `group_team`.
-   - **Hubungan dengan `matches` (One-to-Many):** Satu grup memiliki banyak jadwal pertandingan. Dihubungkan melalui foreign key `group_id` pada tabel `matches`.
-   - **Hubungan dengan `standings` (One-to-Many):** Klasemen grup dihubungkan melalui foreign key `group_id` pada tabel `standings`.
-
-4. **`teams`**
-   - **Hubungan dengan `players` (One-to-Many):** Satu tim (`teams`) dapat memiliki banyak pemain (`players`). Dihubungkan melalui foreign key `team_id` pada tabel `players`.
-   - **Hubungan dengan `group_team` (One-to-Many):** Menghubungkan tim ke dalam grup tertentu. Dihubungkan melalui foreign key `team_id` pada tabel `group_team`.
-   - **Hubungan dengan `matches` (One-to-Many, ganda):** Satu tim dapat bertindak sebagai Tim Kesatu (`team1_id`) atau Tim Kedua (`team2_id`) dalam suatu pertandingan. Dihubungkan melalui foreign key `team1_id` dan `team2_id` pada tabel `matches`.
-   - **Hubungan dengan `standings` (One-to-Many):** Menghubungkan performa tim di klasemen grup melalui foreign key `team_id` pada tabel `standings`.
-
-5. **`group_team`**
-   - Merupakan tabel pivot (*pivot table*) yang merepresentasikan hubungan Many-to-Many antara tabel `groups` dan `teams`. Setiap baris mencatat tim mana saja yang masuk ke dalam grup mana.
-
-6. **`players`**
-   - Setiap pemain terikat pada satu tim tertentu melalui foreign key `team_id`. Tabel ini menyimpan detail informasi pemain seperti nama, posisi, nomor punggung, dan tanggal lahir.
-
-7. **`matches`**
-   - Menyimpan informasi detail pertandingan futsal. Tabel ini mereferensikan:
-     - `tournament_id` ke tabel `tournaments` (menunjukkan pertandingan ini bagian dari turnamen apa).
-     - `group_id` ke tabel `groups` (menunjukkan pertandingan di grup mana, bernilai *nullable* untuk fase knockout).
-     - `team1_id` dan `team2_id` ke tabel `teams` (menunjukkan kedua tim yang bertanding).
-     - `winner_id` ke tabel `teams` (menunjukkan tim pemenang).
-
-8. **`standings`**
-   - Menyimpan data klasemen sementara untuk setiap grup. Tabel ini mereferensikan `tournament_id` (tabel `tournaments`), `group_id` (tabel `groups`), dan `team_id` (tabel `teams`) untuk menghitung performa tim (jumlah main, menang, seri, kalah, gol memasukkan, gol kemasukan, selisih gol, dan poin total).
 
 ---
 
