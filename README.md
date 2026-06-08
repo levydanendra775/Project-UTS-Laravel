@@ -163,3 +163,32 @@ Berikut adalah diagram ERD (Entity Relationship Diagram) dari database aplikasi 
 | **`group_team`** | `group_id (FK)`, `team_id (FK)` |
 | **`matches`** | `id`, `tournament_id (FK)`, `group_id (FK, nullable)`, `round (enum: group, quarterfinal, semifinal, final)`, `team1_id (FK)`, `team2_id (FK)`, `team1_score (nullable)`, `team2_score (nullable)`, `winner_id (FK, nullable)`, `match_date (datetime)`, `status (enum: scheduled, played)`, `timestamps` |
 | **`standings`** | `id`, `tournament_id (FK)`, `group_id (FK)`, `team_id (FK)`, `played (int)`, `won (int)`, `drawn (int)`, `lost (int)`, `goals_for (int)`, `goals_against (int)`, `goals_difference (int)`, `points (int)`, `timestamps` |
+
+---
+
+## Relasi Eloquent
+
+```text
+Tournament       -> hasMany        -> Group
+Tournament       -> hasMany        -> TournamentMatch
+Tournament       -> hasMany        -> Standing
+Group            -> belongsTo      -> Tournament
+Group            -> belongsToMany  -> Team
+Group            -> hasMany        -> TournamentMatch
+Group            -> hasMany        -> Standing
+Team             -> hasMany        -> Player
+Team             -> belongsToMany  -> Group
+Team             -> hasMany        -> Standing
+Team             -> hasMany        -> TournamentMatch (sebagai team1 / home)
+Team             -> hasMany        -> TournamentMatch (sebagai team2 / away)
+Player           -> belongsTo      -> Team
+TournamentMatch  -> belongsTo      -> Tournament
+TournamentMatch  -> belongsTo      -> Group
+TournamentMatch  -> belongsTo      -> Team (sebagai team1)
+TournamentMatch  -> belongsTo      -> Team (sebagai team2)
+TournamentMatch  -> belongsTo      -> Team (sebagai winner)
+Standing         -> belongsTo      -> Tournament
+Standing         -> belongsTo      -> Group
+Standing         -> belongsTo      -> Team
+```
+
