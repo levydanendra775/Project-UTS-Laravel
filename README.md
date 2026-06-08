@@ -170,6 +170,33 @@ Standing         -> belongsTo      -> Team
 
 ---
 
+## Header Wajib
+
+```text
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {token}   ← untuk route protected
+```
+
+---
+
+## Middleware & Otorisasi
+
+Sistem menggunakan satu middleware custom untuk mengontrol akses berdasarkan role:
+
+| Middleware | Alias | Akses Diizinkan |
+| :--- | :--- | :--- |
+| `RoleMiddleware` | `role` | Membatasi akses berdasarkan parameter role (`admin`, `panitia`) |
+
+Pengelompokan Route berdasarkan Role:
+
+* **Public (Guest/Visitor):** `GET /` , `GET /public/tournaments/{tournament}` , `GET /public/tournaments/{tournament}/knockout`
+* **Semua User Terautentikasi (Admin & Panitia):** `GET /dashboard` , `POST /logout`
+* **Panitia & Admin:** `GET /tournaments/{tournament}` , `GET /tournaments/{tournament}/knockout` , `GET/POST/PUT/DELETE /matches` , `GET /tournaments/{tournament}/pdf`
+* **Admin Only (Full Access):** CRUD `/teams` , CRUD `/players` , CRUD `/tournaments` , CRUD `/groups` , POST `/knockout/initialize`
+
+---
+
 ## Daftar Endpoint API
 
 | Modul | Method | Endpoint (Route) | Deskripsi & Akses |
