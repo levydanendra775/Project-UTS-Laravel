@@ -66,6 +66,30 @@ Server akan berjalan dan dapat diakses melalui browser di: http://127.0.0.1:8000
 
 ---
 
+## Postman Collection
+
+File Postman Collection tersedia di root project:
+
+```text
+Futsal_Tournament.postman_collection.json
+```
+
+Import file ini ke Postman untuk langsung menguji semua endpoint API yang tersedia.
+
+---
+
+## Tech Stack
+
+| Teknologi | Versi |
+| :--- | :--- |
+| PHP | `^8.3` |
+| Laravel | `^13.8` |
+| barryvdh/laravel-dompdf | `^3.1` |
+| MySQL | `8.0+` |
+
+---
+
+
 ## Pengujian (Testing)
 * **Akses Web:** Silakan buka [http://127.0.0.1:8000](http://127.0.0.1:8000) di browser untuk melihat dan berinteraksi dengan antarmuka aplikasi.
 * **Pengujian API (Opsional):** Jika proyek ini mencakup pembuatan API, Anda dapat meng-import file Collection Postman (`Futsal_Tournament.postman_collection.json`) yang telah disertakan di dalam repository ini ke dalam aplikasi Postman Anda untuk menguji seluruh endpoint dan error handling yang sudah dikonfigurasi.
@@ -257,6 +281,16 @@ Pengelompokan Route berdasarkan Role:
 | :--- | :--- | :--- | :--- |
 | Admin | Admin Utama | admin@futsal.com | admin123 |
 | Panitia | Panitia Lapangan | panitia@futsal.com | panitia123 |
+
+---
+
+## Kendala dan Solusi
+
+* **Kendala:** Saat melakukan pengujian aksi `POST` (seperti Login, Pembuatan Tim, atau Input Skor) di luar browser atau di Postman, request ditolak/gagal karena masalah perlindungan CSRF (*CSRF protection*).
+* **Solusi:** Di sisi web form, tag `@csrf` wajib ditambahkan ke dalam form HTML. Di sisi pengujian Postman, ditambahkan *scripts* Cheerio pada test-run untuk mengekstrak CSRF token dari halaman login/form secara otomatis dan menyimpannya sebagai *environment variable* untuk dikirimkan bersama request berikutnya.
+* **Kendala:** Penghapusan data master seperti tim atau turnamen yang sudah memiliki data relasi (seperti pemain, pertandingan, atau grup) dapat menyebabkan kegagalan integritas data database (*foreign key constraint error*).
+* **Solusi:** Seluruh *foreign key* didefinisikan menggunakan metode `.onDelete('cascade')` pada *file migrations* Laravel. Dengan demikian, jika data master dihapus, data detail yang terkait akan terhapus secara otomatis dan bersih oleh server database.
+
 
 
 
