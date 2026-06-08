@@ -59,6 +59,8 @@ Akses Web: Silakan buka http://127.0.0.1:8000 di browser untuk melihat dan berin
 
 Pengujian API (Opsional): Jika proyek ini mencakup pembuatan API, Anda dapat meng-import file Collection Postman (.json) yang telah disertakan di dalam repository ini ke dalam aplikasi Postman Anda untuk menguji seluruh endpoint dan error handling yang sudah dikonfigurasi.
 
-![landing page](<public/img/01. landing page.png>)
+### Dokumentasi Project
 
-img/01. landing page.png
+![Halaman Landing Page](img/01. landing page.png)
+![Halaman Login](img/02. show login page.png)
+![Aksi Login Admin](img/03. admin login action.png)
