@@ -72,7 +72,7 @@ Server akan berjalan dan dapat diakses melalui browser di: http://127.0.0.1:8000
 
 ---
 
-## 5. Dokumentasi / Tampilan Aplikasi (Screenshots)
+## 5. Testing & Dokumentasi API (postman)
 Berikut adalah beberapa tampilan antarmuka (interface) dari aplikasi Futsal Tournament:
 
 1. **Landing Page**
@@ -105,4 +105,46 @@ Berikut adalah beberapa tampilan antarmuka (interface) dari aplikasi Futsal Tour
 10. **Aksi Logout**
     ![Logout Action](img/10.%20logout_action.png)
 
+---
+
+## ERD Database & Relasi
+
+Berikut adalah diagram ERD (Entity Relationship Diagram) dari database aplikasi Futsal Tournament:
+
+![ERD Database](ERD/erd_database.png)
+
+### Penjelasan Relasi Antar Tabel
+
+1. **`users`**
+   - Tabel ini bersifat mandiri (*standalone*) dan digunakan untuk mengelola data pengguna (nama, email, password, role) dalam sistem, seperti autentikasi admin atau panitia turnamen.
+
+2. **`tournaments`**
+   - **Hubungan dengan `groups` (One-to-Many):** Satu turnamen (`tournaments`) dapat memiliki banyak grup (`groups`). Relasi ini dihubungkan melalui foreign key `tournament_id` pada tabel `groups`.
+   - **Hubungan dengan `matches` (One-to-Many):** Satu turnamen dapat mengadakan banyak pertandingan (`matches`). Relasi ini dihubungkan melalui foreign key `tournament_id` pada tabel `matches`.
+
+3. **`groups`**
+   - **Hubungan dengan `group_team` (One-to-Many):** Menghubungkan grup dengan tim yang berpartisipasi di dalamnya. Dihubungkan melalui foreign key `group_id` pada tabel `group_team`.
+   - **Hubungan dengan `matches` (One-to-Many):** Satu grup memiliki banyak jadwal pertandingan. Dihubungkan melalui foreign key `group_id` pada tabel `matches`.
+   - **Hubungan dengan `standings` (One-to-Many):** Klasemen grup dihubungkan melalui foreign key `group_id` pada tabel `standings`.
+
+4. **`teams`**
+   - **Hubungan dengan `players` (One-to-Many):** Satu tim (`teams`) dapat memiliki banyak pemain (`players`). Dihubungkan melalui foreign key `team_id` pada tabel `players`.
+   - **Hubungan dengan `group_team` (One-to-Many):** Menghubungkan tim ke dalam grup tertentu. Dihubungkan melalui foreign key `team_id` pada tabel `group_team`.
+   - **Hubungan dengan `matches` (One-to-Many, ganda):** Satu tim dapat bertindak sebagai tim kandang (`home_team_id`) atau tim tandang (`away_team_id`) dalam suatu pertandingan. Dihubungkan melalui `home_team_id` dan `away_team_id` pada tabel `matches`.
+   - **Hubungan dengan `standings` (One-to-Many):** Menghubungkan performa tim di klasemen grup melalui foreign key `team_id` pada tabel `standings`.
+
+5. **`group_team`**
+   - Merupakan tabel pivot (*pivot table*) yang merepresentasikan hubungan Many-to-Many antara tabel `groups` dan `teams`. Setiap baris mencatat tim mana saja yang masuk ke dalam grup mana.
+
+6. **`players`**
+   - Setiap pemain terikat pada satu tim tertentu melalui foreign key `team_id`. Tabel ini menyimpan detail informasi pemain seperti nama, posisi, dan nomor punggung.
+
+7. **`matches`**
+   - Menyimpan informasi detail pertandingan futsal. Tabel ini mereferensikan:
+     - `tournament_id` ke tabel `tournaments` (menunjukkan pertandingan ini bagian dari turnamen apa).
+     - `group_id` ke tabel `groups` (menunjukkan pertandingan di grup mana, bernilai *nullable* untuk fase knockout).
+     - `home_team_id` dan `away_team_id` ke tabel `teams` (menunjukkan dua tim yang bertanding).
+
+8. **`standings`**
+   - Menyimpan data klasemen sementara untuk setiap grup. Tabel ini mereferensikan `group_id` (tabel `groups`) dan `team_id` (tabel `teams`) untuk menghitung performa tim (jumlah main, menang, seri, kalah, gol memasukkan, gol kemasukan, dan poin total).
 
