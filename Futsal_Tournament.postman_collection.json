@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "f8c85c2b-e4c1-4bda-bd8c-57c5d01249b6",
+		"name": "Futsal Tournament Tests",
+		"description": "Koleksi Postman berisi 10 pengujian fungsionalitas aplikasi Futsal Tournament Laravel, mulai dari Halaman Utama, Alur Autentikasi (Login/Logout), Ekstraksi CSRF Token, Halaman Dashboard, CRUD Tim, dan Halaman Publik Turnamen.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. [Public] Landing Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Landing page loaded successfully\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Futsal\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "e2f1e6b3-e2e1-45df-91bd-cb74f826315c"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Mengakses halaman landing page publik."
+			},
+			"response": []
+		},
+		{
+			"name": "2. [Auth] Show Login Page & Extract CSRF Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Ekstraksi CSRF Token menggunakan Cheerio",
+							"const responseHTML = pm.response.text();",
+							"const cheerio = require('cheerio');",
+							"const $ = cheerio.load(responseHTML);",
+							"const csrfToken = $('input[name=\"_token\"]').val();",
+							"",
+							"if (csrfToken) {",
+							"    pm.collectionVariables.set(\"csrf_token\", csrfToken);",
+							"    console.log(\"CSRF Token berhasil disimpan:\", csrfToken);",
+							"} else {",
+							"    console.error(\"CSRF Token tidak ditemukan!\");",
+							"}"
+						],
+						"type": "javascript",
+						"id": "6704bbd5-f55a-4b9f-b7a4-e7c65d6c8b9d"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "Mengakses halaman login dan mengambil CSRF token untuk submit form berikutnya."
+			},
+			"response": []
+		},
+		{
+			"name": "3. [Auth] Admin Login Action",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 302 (Redirect setelah login sukses)\", function () {",
+							"    pm.response.to.have.status(302);",
+							"});",
+							"",
+							"pm.test(\"Dialihkan ke Halaman Dashboard\", function () {",
+							"    pm.response.to.have.header(\"Location\");",
+							"    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/dashboard\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "2d1eb7d0-15bd-44ad-8822-26dbccde2d2d"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "_token",
+							"value": "{{csrf_token}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "admin@futsal.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "Melakukan login menggunakan akun admin yang ada pada seeder."
+			},
+			"response": []
+		},
+		{
+			"name": "4. [Protected] Access Dashboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Halaman Dashboard memuat data yang benar\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Dashboard\");",
+							"    pm.expect(pm.response.text()).to.include(\"Admin Utama\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "84af6fa8-48b2-4d23-ab3f-a3c30a514d8e"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dashboard",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard"
+					]
+				},
+				"description": "Verifikasi bahwa admin yang telah login dapat mengakses halaman dashboard."
+			},
+			"response": []
+		},
+		{
+			"name": "5. [Protected] Get Team Creation Form (Fetch New Token)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Ekstraksi CSRF Token baru dari halaman formulir tambah tim",
+							"const responseHTML = pm.response.text();",
+							"const cheerio = require('cheerio');",
+							"const $ = cheerio.load(responseHTML);",
+							"const csrfToken = $('input[name=\"_token\"]').val();",
+							"",
+							"if (csrfToken) {",
+							"    pm.collectionVariables.set(\"csrf_token\", csrfToken);",
+							"}"
+						],
+						"type": "javascript",
+						"id": "e2a1b1fd-4b47-49d7-8393-272e6123e449"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/teams/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teams",
+						"create"
+					]
+				},
+				"description": "Akses ke halaman tambah tim dan perbarui CSRF token."
+			},
+			"response": []
+		},
+		{
+			"name": "6. [Protected] Create Team Action",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Generate nama tim acak agar tidak memicu error validasi nama unik",
+							"const randomSuffix = Math.floor(Math.random() * 10000);",
+							"pm.collectionVariables.set(\"random_team_suffix\", randomSuffix);",
+							"pm.collectionVariables.set(\"new_team_name\", \"Postman FC \" + randomSuffix);"
+						],
+						"type": "javascript",
+						"id": "31f7cfb8-c309-42b7-a3f1-43282b8a7c29"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 302 (Redirect setelah berhasil buat tim)\", function () {",
+							"    pm.response.to.have.status(302);",
+							"});"
+						],
+						"type": "javascript",
+						"id": "5bd902df-7eb5-4089-9dbb-8d06e22cc37a"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "_token",
+							"value": "{{csrf_token}}",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "{{new_team_name}}",
+							"type": "text"
+						},
+						{
+							"key": "coach_name",
+							"value": "Coach Postman",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Tim ini dibuat otomatis menggunakan test script Postman.",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/teams",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teams"
+					]
+				},
+				"description": "Menambahkan tim baru ke database."
+			},
+			"response": []
+		},
+		{
+			"name": "7. [Protected] List Teams and Validate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Tim baru yang dibuat muncul di list\", function () {",
+							"    const teamName = pm.collectionVariables.get(\"new_team_name\");",
+							"    pm.expect(pm.response.text()).to.include(teamName);",
+							"});"
+						],
+						"type": "javascript",
+						"id": "1db2a5f5-4122-4fe4-aa31-e1e5b1239bfb"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/teams",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teams"
+					]
+				},
+				"description": "Mengakses daftar tim dan memverifikasi tim baru yang ditambahkan ada dalam response HTML."
+			},
+			"response": []
+		},
+		{
+			"name": "8. [Public] Tournament Detail Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Menampilkan informasi turnamen Liga Futsal Nusantara\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Liga Futsal Nusantara\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "787f7bdc-d2c3-4d4b-9eb0-e14dfc4a22cb"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/public/tournaments/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"public",
+						"tournaments",
+						"1"
+					]
+				},
+				"description": "Verifikasi detail turnamen publik (ID 1) yang dibuat oleh seeder."
+			},
+			"response": []
+		},
+		{
+			"name": "9. [Public] Tournament Knockout Bracket Page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Halaman Bracket memuat konten Knockout\", function () {",
+							"    pm.expect(pm.response.text().toLowerCase()).to.include(\"knockout\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "da14c449-74d1-4cb5-827d-1db9e64e1eb3"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/public/tournaments/1/knockout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"public",
+						"tournaments",
+						"1",
+						"knockout"
+					]
+				},
+				"description": "Verifikasi bracket knockout turnamen publik (ID 1)."
+			},
+			"response": []
+		},
+		{
+			"name": "10. [Auth] Logout Action",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 302 (Redirect setelah logout sukses)\", function () {",
+							"    pm.response.to.have.status(302);",
+							"});",
+							"",
+							"pm.test(\"Dialihkan kembali ke halaman Login\", function () {",
+							"    pm.response.to.have.header(\"Location\");",
+							"    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login\");",
+							"});"
+						],
+						"type": "javascript",
+						"id": "d0be13d4-b91c-4b53-84f9-2b4a53ccb2e4"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "_token",
+							"value": "{{csrf_token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"logout"
+					]
+				},
+				"description": "Mengakhiri sesi autentikasi dan logout."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "7ca647bc-e123-455b-9d41-a1e626e828db",
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"id": "2de14bc5-22b3-4fde-b6fd-c2f814de72ab",
+			"key": "csrf_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "90ba95ef-2ef1-4cf1-9ad8-2b812bdcb22b",
+			"key": "random_team_suffix",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "5cb13d9a-ab8d-4ad1-9efb-b6fb123ce3eb",
+			"key": "new_team_name",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
